@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ref: [output-failures, test-hook-once, release-date, extra-arguments, literal-cache-paths]
+        ref: ["169", "170"]
     steps:
       - uses: actions/checkout@v7
         with:
