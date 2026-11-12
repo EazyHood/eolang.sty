@@ -1,0 +1,25 @@
+name: Validate contributions
+on:
+  push:
+    branches: [validation]
+permissions:
+  contents: read
+jobs:
+  ctan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        ref: [8e060c53927d8187ac83e79938564dec4e51d30e]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ matrix.ref }}
+      - run: sudo apt-get update && sudo apt-get install -y ghostscript
+      - run: sed -E 's/^(hard|soft|build) +//' DEPENDS.txt > .tl_packages
+      - uses: zauguin/install-texlive@v4.5.0
+        with:
+          package_file: .tl_packages
+          texlive_version: 2026
+      - run: l3build ctan --show-log-on-error --halt-on-error
