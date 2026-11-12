@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ref: ["169", "170"]
+        ref: ["171", "173"]
     steps:
       - uses: actions/checkout@v7
         with:
@@ -22,4 +22,20 @@ jobs:
         with:
           package_file: .tl_packages
           texlive_version: 2026
+      - name: Reproduce the percent-path failure on the base
+        if: matrix.ref == '171'
+        run: |
+          cp eolang.pl "$RUNNER_TEMP/candidate.pl"
+          git fetch origin 8e060c53927d8187ac83e79938564dec4e51d30e --depth=1
+          git show 8e060c53927d8187ac83e79938564dec4e51d30e:eolang.pl > eolang.pl
+          if perl tests/percent-path-test.pl; then
+            echo 'Expected the base to fail with a percent-containing path'
+            exit 1
+          fi
+          cp "$RUNNER_TEMP/candidate.pl" eolang.pl
       - run: l3build ctan --show-log-on-error --halt-on-error
+      - name: Run executable test entry points
+        run: |
+          for script in tests/*.pl; do
+            "$script"
+          done
