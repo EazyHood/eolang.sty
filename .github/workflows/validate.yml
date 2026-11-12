@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ref: [8e060c53927d8187ac83e79938564dec4e51d30e]
+        ref: [output-failures, test-hook-once, release-date, extra-arguments, literal-cache-paths]
     steps:
       - uses: actions/checkout@v7
         with:
